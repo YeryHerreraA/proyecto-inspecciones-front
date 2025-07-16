@@ -12,7 +12,10 @@
       <li v-for="cond in inspeccion.condiciones" :key="cond.id">
         <strong>{{ cond.tipo }}</strong> - {{ cond.categoria }} - {{ cond.criticidad }}<br>
         <span class="texto-largo">{{ cond.descripcion }}</span><br>
-        <span v-if="cond.evidencia">Evidencia: <a :href="evidenciaUrl(cond.evidencia)" target="_blank">Ver imagen</a></span>
+        <span v-if="cond.evidencia">
+          Evidencia:<br>
+          <img :src="evidenciaUrl(cond.evidencia)" alt="Evidencia" style="max-width: 300px; max-height: 200px; margin: 0.5rem 0; border-radius: 8px; border: 1px solid #ccc;" />
+        </span>
       </li>
     </ul>
     <router-link class="nuevo-btn" :to="`/inspecciones/${inspeccion.id}/condiciones/crear`">Agregar Condición</router-link>

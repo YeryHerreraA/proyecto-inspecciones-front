@@ -2,11 +2,19 @@
   <div class="inspecciones-list">
     <h2>Inspecciones</h2>
     <router-link class="nuevo-btn" to="/inspecciones/crear">+ Nueva Inspección</router-link>
+    <div v-if="mensaje" class="mensaje-exito">{{ mensaje }}</div>
     <ul>
-      <li v-for="inspeccion in inspecciones" :key="inspeccion.id">
+      <li v-for="inspeccion in inspecciones" :key="inspeccion.id" class="flex items-center justify-between">
         <router-link :to="`/inspecciones/${inspeccion.id}`">
           {{ inspeccion.area }} - {{ inspeccion.fecha }} - {{ inspeccion.tipo }}
         </router-link>
+        <button
+          @click="eliminarInspeccion(inspeccion.id)"
+          class="ml-4 px-3 py-1 rounded bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors"
+          title="Eliminar"
+        >
+          Eliminar
+        </button>
       </li>
     </ul>
   </div>
@@ -17,10 +25,24 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const inspecciones = ref([])
+const mensaje = ref('')
 
 const fetchInspecciones = async () => {
   const res = await axios.get('/api/inspecciones')
   inspecciones.value = res.data
+}
+
+const eliminarInspeccion = async (id) => {
+  if (confirm('¿Estás seguro de que deseas eliminar esta inspección?')) {
+    try {
+      await axios.delete(`/api/inspecciones/${id}`)
+      inspecciones.value = inspecciones.value.filter(i => i.id !== id)
+      mensaje.value = 'Inspección eliminada'
+      setTimeout(() => mensaje.value = '', 2500)
+    } catch (err) {
+      alert('Error al eliminar la inspección')
+    }
+  }
 }
 
 onMounted(fetchInspecciones)
@@ -77,5 +99,14 @@ li a {
 }
 li a:hover {
   color: #0056b3;
+}
+.mensaje-exito {
+  background: #22c55e;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  text-align: center;
 }
 </style> 
